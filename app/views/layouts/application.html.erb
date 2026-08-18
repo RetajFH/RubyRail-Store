@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Store" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Store">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Public+Sans:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap');
+
+      :root {
+        --paper: #FAFAF7;
+        --ink: #1C1B1A;
+        --accent: #2B4C3F;
+        --accent-soft: #E4EBE7;
+        --line: #D8D5CC;
+        --muted: #8A8577;
+        --warn: #B23A2E;
+        --warn-soft: #F5E6E3;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: 'Public Sans', sans-serif;
+      }
+
+      body { min-height: 100vh; display: flex; flex-direction: column; }
+
+      a { color: inherit; }
+
+      .shell-nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--paper);
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        max-width: 1080px;
+      }
+
+      .shell-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: -0.01em;
+      }
+
+      .shell-brand::before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: inline-block;
+      }
+
+      .shell-links {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+      }
+
+      .shell-links a {
+        font-size: 0.85rem;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        padding-bottom: 2px;
+        transition: border-color .15s ease, color .15s ease;
+      }
+
+      .shell-links a:hover { color: var(--accent); border-color: var(--accent); }
+
+      .shell-logout {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 0.45rem 0.75rem;
+        cursor: pointer;
+        transition: color .15s ease, border-color .15s ease;
+      }
+
+      .shell-logout:hover { color: var(--ink); border-color: var(--ink); }
+
+      .shell-flash {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.8rem;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .shell-flash.notice { background: var(--accent-soft); color: var(--accent); }
+      .shell-flash.alert { background: var(--warn-soft); color: var(--warn); }
+      .shell-flash:empty { display: none; }
+
+      main { flex: 1; }
+
+      .shell-footer {
+        border-top: 1px solid var(--line);
+        padding: 1.5rem;
+        text-align: center;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .shell-links a, .shell-logout { transition: none; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="shell-nav">
+      <%= link_to root_path, class: "shell-brand" do %>Store<% end %>
+      <div class="shell-links">
+        <%= link_to "Home", root_path %>
+        <% if authenticated? %>
+          <%= button_to "Log out", session_path, method: :delete, class: "shell-logout" %>
+        <% end %>
+      </div>
+    </nav>
+
+    <% if flash[:notice].present? %>
+      <div class="shell-flash notice"><%= flash[:notice] %></div>
+    <% end %>
+    <% if flash[:alert].present? %>
+      <div class="shell-flash alert"><%= flash[:alert] %></div>
+    <% end %>
+
+    <main>
+      <%= yield %>
+    </main>
+
+    <footer class="shell-footer">Store &middot; Catalogue System</footer>
+  </body>
+</html>

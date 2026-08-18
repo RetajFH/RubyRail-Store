@@ -1,0 +1,35 @@
+<div class="pf-page">
+  <style>
+    .pf-page { max-width: 1080px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .pf-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.4rem;
+    }
+    .pf-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      margin: 0 0 1.75rem;
+      letter-spacing: -0.01em;
+    }
+    .pf-cancel {
+      display: inline-block;
+      margin-top: 1.25rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .pf-cancel:hover { color: var(--ink); }
+  </style>
+
+  <p class="pf-eyebrow">Store / New entry</p>
+  <h1 class="pf-title">New product</h1>
+
+  <%= render "form", product: @product %>
+  <%= link_to "Cancel", products_path, class: "pf-cancel" %>
+</div>
