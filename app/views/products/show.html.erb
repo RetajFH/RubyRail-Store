@@ -134,6 +134,34 @@
     @media (prefers-reduced-motion: reduce) {
       .sp-edit, .sp-delete { transition: none; }
     }
+    .sp-sizes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sp-sizes-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sp-sizes-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sp-size-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.3rem 0.65rem;
+  color: var(--ink);
+}
   </style>
 
   <%= link_to products_path, class: "sp-back" do %>&larr; Back to catalogue<% end %>
@@ -141,7 +169,7 @@
   <div class="sp-layout">
     <div class="sp-image">
       <% if @product.featured_image.attached? %>
-        <%= image_tag @product.featured_image %>
+       <%= image_tag @product.featured_image %>
       <% else %>
         <span class="sp-image-empty"><%= @product.name.presence&.first&.upcase || "?" %></span>
       <% end %>
@@ -153,7 +181,16 @@
         <span class="sp-price"><%= number_to_currency(@product.price) %></span>
         <div class="sp-description"><%= @product.description %></div>
       <% end %>
-
+      <% if @product.sizes.present? %>
+      <div class="sp-sizes">
+        <span class="sp-sizes-label">Available sizes</span>
+        <div class="sp-sizes-list">
+          <% @product.sizes.each do |size| %>
+          <span class="sp-size-tag"><%= size %></span>
+          <% end %>
+        </div>
+      </div>
+      <%end%>
       <div class="sp-inventory">
         <%= render "inventory", product: @product %>
       </div>

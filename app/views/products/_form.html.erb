@@ -104,7 +104,13 @@
       <%= form.number_field :inventory_count %>
     </div>
   </div>
-
+<div class="pf-row">
+  <div class="pf-field">
+    <%= form.label :sizes %>
+    <%= form.text_field :sizes , value: form.object.sizes&.join(", ") ,
+        placeholder: "S, M, L, XL"%>
+  </div>
+</div>
   <div class="pf-field">
     <%= form.label :description %>
     <%= form.rich_textarea :description %>
