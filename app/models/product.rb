@@ -15,10 +15,10 @@ class Product < ApplicationRecord
   scope :price_lteq, ->(price) {price.present? ? where("price <= ?", price) : all}
 
 
-  before_validation :split_sizes
+  before_validation :convert_sizes_to_array
 
   private
-  def split_sizes
+  def convert_sizes_to_array
     return unless sizes.is_a?(String)
     self.sizes = sizes.split(",").map(&:strip).reject(&:blank?)
   end
