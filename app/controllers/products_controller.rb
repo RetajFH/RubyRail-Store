@@ -3,8 +3,10 @@ class ProductsController < ApplicationController
   before_action :set_product, only: %i[show edit update destroy ]
   def index
     @products = Product.all
-    @products = @products.price_gteq(params[:min_price])
-    @products = @products.price_lteq(params[:max_price])
+    .price_gteq(params[:min_price])
+    .price_lteq(params[:max_price])
+    .search_by_name(params[:search_name])
+
   end
 
   def show

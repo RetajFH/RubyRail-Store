@@ -11,9 +11,17 @@ class Product < ApplicationRecord
   serialize :sizes, coder: JSON
    
 
-  scope :price_gteq, ->(price) {price.present? ? where("price >= ?", price) : all}
-  scope :price_lteq, ->(price) {price.present? ? where("price <= ?", price) : all}
+ scope :price_gteq, ->(price) {
+  price.present? ? where("price >= ?", price) : all
+}
 
+scope :price_lteq, ->(price) {
+  price.present? ? where("price <= ?", price) : all
+}
+
+scope :search_by_name, ->(name) {
+  name.present? ? where("name LIKE ?", "%#{name}%") : all
+}
 
   before_validation :convert_sizes_to_array
 

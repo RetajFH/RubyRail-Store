@@ -1,4 +1,5 @@
 <% content_for :title, "Catalogue" %>
+
 <div class="sc-page">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Public+Sans:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap');
@@ -57,7 +58,10 @@
       transition: border-color .15s ease, color .15s ease;
     }
 
-    .sc-nav a:hover { color: var(--accent); border-color: var(--accent); }
+    .sc-nav a:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
 
     .sc-ledger {
       max-width: 1080px;
@@ -113,7 +117,10 @@
       outline-offset: -2px;
     }
 
-    .sc-arrow { color: var(--muted); font-size: 0.9rem; }
+    .sc-arrow {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
 
     .sc-submit {
       font-family: 'IBM Plex Mono', monospace;
@@ -129,8 +136,14 @@
       transition: opacity .15s ease;
     }
 
-    .sc-submit:hover { opacity: 0.85; }
-    .sc-submit:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .sc-submit:hover {
+      opacity: 0.85;
+    }
+
+    .sc-submit:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
 
     .sc-clear {
       font-family: 'IBM Plex Mono', monospace;
@@ -140,7 +153,10 @@
       border-bottom: 1px dashed var(--muted);
     }
 
-    .sc-clear:hover { color: var(--ink); border-color: var(--ink); }
+    .sc-clear:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
 
     .sc-grid {
       max-width: 1080px;
@@ -191,7 +207,11 @@
       margin-bottom: 0.9rem;
     }
 
-    .sc-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .sc-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
     .sc-monogram {
       font-family: 'Space Grotesk', sans-serif;
@@ -207,7 +227,10 @@
       margin: 0 0 0.5rem;
     }
 
-    .sc-name.untitled { color: var(--muted); font-style: italic; }
+    .sc-name.untitled {
+      color: var(--muted);
+      font-style: italic;
+    }
 
     .sc-price {
       font-family: 'IBM Plex Mono', monospace;
@@ -236,10 +259,15 @@
       font-size: 0.9rem;
     }
 
-    .sc-empty a { color: var(--accent); }
+    .sc-empty a {
+      color: var(--accent);
+    }
 
     @media (prefers-reduced-motion: reduce) {
-      .sc-card, .sc-submit { transition: none; }
+      .sc-card,
+      .sc-submit {
+        transition: none;
+      }
     }
   </style>
 
@@ -248,50 +276,74 @@
       <p class="sc-eyebrow">Store / Catalogue</p>
       <h1 class="sc-title"><%= t ".title" %></h1>
     </div>
+
     <nav class="sc-nav">
       <%= link_to "Login", new_session_path unless authenticated? %>
       <%= link_to "New product", new_product_path if authenticated? %>
     </nav>
   </div>
 
-  <%= form_with url: products_path, method: :get, class: "sc-ledger" do |f| %>
-    <span class="sc-ledger-label">Filter by price</span>
-    <div class="sc-field">
-      <span>$</span>
-      <%= f.number_field :min_price, value: params[:min_price], placeholder: "min" %>
+  <%= form_with url: products_path, method: :get, local: true do |f| %>
+    <div class="sc-ledger">
+      <span class="sc-ledger-label">Filter by price</span>
+
+      <div class="sc-field">
+        <span>$</span>
+        <%= f.number_field :min_price,
+          value: params[:min_price],
+          placeholder: "min" %>
+      </div>
+
+      <span class="sc-arrow">&rarr;</span>
+
+      <div class="sc-field">
+        <span>$</span>
+        <%= f.number_field :max_price,
+          value: params[:max_price],
+          placeholder: "max" %>
+      </div>
+
+      <span class="sc-ledger-label">Search</span>
+ <div class="sc-field">
+      <%= f.text_field :search_name,
+        value: params[:search_name],
+        placeholder: "search by name" %>
+ </div>
+      <%= f.submit "Filter", class: "sc-submit" %>
+
+      <%= link_to "Clear", products_path, class: "sc-clear" %>
     </div>
-    <span class="sc-arrow">&rarr;</span>
-    <div class="sc-field">
-      <span>$</span>
-      <%= f.number_field :max_price, value: params[:max_price], placeholder: "max" %>
-    </div>
-    <%= f.submit "Filter", class: "sc-submit" %>
-    <%= link_to "Clear", products_path, class: "sc-clear" %>
   <% end %>
 
   <% if @products.any? %>
     <div class="sc-grid">
       <% @products.each do |product| %>
-        <a href="/products/<%= product.id %>" class="sc-card">
+        <%= link_to product_path(product), class: "sc-card" do %>
           <div class="sc-thumb">
             <% if product.featured_image.attached? %>
               <%= image_tag product.featured_image %>
             <% else %>
-              <span class="sc-monogram"><%= product.name.presence&.first&.upcase || "?" %></span>
+              <span class="sc-monogram">
+                <%= product.name.presence&.first&.upcase || "?" %>
+              </span>
             <% end %>
           </div>
+
           <p class="sc-name<%= " untitled" if product.name.blank? %>">
             <%= product.name.presence || "Untitled item" %>
           </p>
+
           <div class="sc-price" data-id="<%= product.id %>">
             <%= number_to_currency(product.price) %>
           </div>
-        </a>
+        <% end %>
       <% end %>
     </div>
   <% else %>
     <div class="sc-empty">
-      No items match this range. <%= link_to "Clear the filter", products_path %> to see the full catalogue.
+      No items match this range.
+      <%= link_to "Clear the filter", products_path %>
+      to see the full catalogue.
     </div>
   <% end %>
 </div>
