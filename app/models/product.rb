@@ -7,21 +7,21 @@ class Product < ApplicationRecord
   validates :price, numericality: { greater_than_or_equal_to: 0 }
   validates :name, presence: true
   validates :inventory_count, numericality: { greater_than_or_equal_to: 0 }
-
   serialize :sizes, coder: JSON
-   
+  
 
- scope :price_gteq, ->(price) {
-  price.present? ? where("price >= ?", price) : all
-}
 
-scope :price_lteq, ->(price) {
-  price.present? ? where("price <= ?", price) : all
-}
+  scope :price_gteq, ->(price) {
+    where("price >= ?", price)
+  }
 
-scope :search_by_name, ->(name) {
-  name.present? ? where("name LIKE ?", "%#{name}%") : all
-}
+  scope :price_lteq, ->(price) {
+    where("price  <= ?",price)
+  }
+
+  scope :search_by_name, ->(name) {
+    where("name LIKE ?", "%#{name}%")
+  }
 
   before_validation :convert_sizes_to_array
 

@@ -1,12 +1,32 @@
 class ProductsController < ApplicationController
   allow_unauthenticated_access only: %i[index show]
   before_action :set_product, only: %i[show edit update destroy ]
-  def index
-    @products = Product.all
-    .price_gteq(params[:min_price])
-    .price_lteq(params[:max_price])
-    .search_by_name(params[:search_name])
+  
 
+  def index
+    @min_price = params[:min_price]
+    @max_price = params[:max_price]
+    @search_by_name = params[:search_name]
+
+    @products = Product.all
+
+    if @min_price.present? &&
+      @max_price.present? &&
+      @min_price.to_f > @max_price.to_f
+      flash.now[:alert] = "Minimum price cannot be greater than maximum price"
+      return
+    end
+    if @min_price.present?
+      @products = @products.price_gteq(@min_price)
+    end
+
+    if @max_price.present?
+      @products = @products.price_lteq(@max_price)
+    end
+
+    if @search_by_name.present?
+      @products = @products.search_by_name(@search_by_name)
+    end
   end
 
   def show
