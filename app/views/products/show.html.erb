@@ -171,7 +171,7 @@
       <% if @product.featured_image.attached? %>
        <%= image_tag @product.featured_image %>
       <% else %>
-        <span class="sp-image-empty"><%= @product.name.presence&.first&.upcase || "?" %></span>
+        <span class="sp-image-empty"><%= @product.name%></span>
       <% end %>
     </div>
 

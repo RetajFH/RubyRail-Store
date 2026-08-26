@@ -84,3 +84,29 @@ bakery_products.each do |attrs|
 end
 
 puts "✅ #{Product.count} products created"
+
+cities = [
+  "Jeddah",
+  "Makkah",
+  "Riyadh"
+]
+
+cities.each do |name|
+  City.find_or_create_by!(name: name)
+end
+
+puts "✅ #{City.count} City created"
+
+product = Product.find_or_create_by!(
+  name: "French Butter Croissant"
+) do |p|
+  p.price = 14.00
+  p.inventory_count = 20
+  p.sizes = ["Small,Medium,Large"]
+end
+product.cities = [
+  City.find_by!(name: "Jeddah"),
+  City.find_by!(name: "Makkah")
+]
+
+puts "✅ cities added to Butter Croissant"

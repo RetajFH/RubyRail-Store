@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   end
   resource :registration, only: %i[new create]
   resources :unsubscribe, only: [ :show ]
+  resources :cities
   # resources :User
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest

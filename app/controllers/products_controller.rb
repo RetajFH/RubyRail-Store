@@ -66,6 +66,6 @@ class ProductsController < ApplicationController
     @product= Product.find(params[:id])
   end
   def product_params
-      params.expect(product: [ :name, :description, :featured_image, :inventory_count , :price ,:sizes])
+      params.expect(product: [ :name, :description, :featured_image, :inventory_count , :price ,:sizes ,city_ids: []])
   end
 end

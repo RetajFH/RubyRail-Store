@@ -1,0 +1,16 @@
+<h1>Cities</h1>
+
+<%= link_to "New city", new_city_path %>
+
+<% @cities.each do |city| %>
+  <div>
+    <span><%= city.name %></span>
+
+    <%= link_to "Edit", edit_city_path(city) %>
+
+    <%= button_to "Delete",
+          city_path(city),
+          method: :delete,
+          data: { turbo_confirm: "Are you sure?" } %>
+  </div>
+<% end %>

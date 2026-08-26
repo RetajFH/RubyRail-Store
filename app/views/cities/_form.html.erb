@@ -1,0 +1,18 @@
+<%= form_with model: city do |form| %>
+
+  <% if city.errors.any? %>
+    <div>
+      <% city.errors.full_messages.each do |message| %>
+        <p><%= message %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name, required: true %>
+  </div>
+
+  <%= form.submit %>
+
+<% end %>

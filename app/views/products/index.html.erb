@@ -281,6 +281,7 @@
       <%= link_to "sign up" ,  new_registration_path unless authenticated?  %>
       <%= link_to "Login", new_session_path unless authenticated? %>
       <%= link_to "New product", new_product_path if admin?   %>
+      <%= link_to "New city", new_city_path if admin?   %>
     </nav>
   </div>
 
