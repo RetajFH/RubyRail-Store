@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "registrations/new"
+  get "registrations/create"
   resource :session
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -9,9 +11,9 @@ Rails.application.routes.draw do
   root "products#index"
   resources :products
   resources :products do
-    resources :subscribers, only: [ :create ]
+  resources :subscribers, only: [ :create ]
   end
-
+  resource :registration, only: %i[new create]
   resources :unsubscribe, only: [ :show ]
   # resources :User
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)

@@ -197,8 +197,8 @@
 
       <% if authenticated? %>
         <div class="sp-actions">
-          <%= link_to "Edit", edit_product_path(@product), class: "sp-edit" %>
-          <%= button_to "Delete", @product, method: :delete, class: "sp-delete", data: { turbo_confirm: "Are you sure?" } %>
+          <%= link_to "Edit", edit_product_path(@product), class: "sp-edit"  if admin?  %>
+          <%= button_to "Delete", @product, method: :delete, class: "sp-delete", data: { turbo_confirm: "Are you sure?" } if admin?  %>
         </div>
       <% end %>
     </div>

@@ -1,0 +1,315 @@
+<% content_for :title, "Sign Up" %>
+
+<div class="signup-page">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Public+Sans:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap');
+
+    .signup-page {
+      --paper: #FAFAF7;
+      --ink: #1C1B1A;
+      --accent: #2B4C3F;
+      --line: #D8D5CC;
+      --muted: #8A8577;
+      --error: #9B3D35;
+
+      min-height: 100vh;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Public Sans', sans-serif;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .signup-wrapper {
+      width: 100%;
+      max-width: 460px;
+    }
+
+    /* Header */
+
+    .signup-header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 1.5rem;
+    }
+
+    .signup-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.5rem;
+    }
+
+    .signup-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+
+    .signup-subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0.6rem 0 0;
+    }
+
+    /* Card */
+
+    .signup-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 12px 30px -20px rgba(28, 27, 26, 0.3);
+    }
+
+    /* Errors */
+
+    .signup-errors {
+      background: #FBF1EF;
+      border: 1px solid #E7C7C2;
+      border-radius: 5px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .signup-errors h2 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--error);
+      margin: 0 0 0.6rem;
+    }
+
+    .signup-errors ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--error);
+      font-size: 0.85rem;
+    }
+
+    .signup-errors li {
+      margin-bottom: 0.25rem;
+    }
+
+    /* Fields */
+
+    .signup-field {
+      margin-bottom: 1.25rem;
+    }
+
+    .signup-field label {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.45rem;
+    }
+
+    .signup-field input {
+      width: 100%;
+      box-sizing: border-box;
+
+      border: 1px solid var(--line);
+      border-radius: 5px;
+
+      background: #FAFAF7;
+      color: var(--ink);
+
+      padding: 0.75rem 0.8rem;
+
+      font-family: 'Public Sans', sans-serif;
+      font-size: 0.9rem;
+
+      outline: none;
+
+      transition:
+        border-color .15s ease,
+        box-shadow .15s ease,
+        background .15s ease;
+    }
+
+    .signup-field input:hover {
+      border-color: #BDB9AE;
+    }
+
+    .signup-field input:focus {
+      background: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(43, 76, 63, 0.1);
+    }
+
+    /* Submit */
+
+    .signup-submit {
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+
+      background: var(--accent);
+      color: #fff;
+
+      padding: 0.8rem 1rem;
+
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+
+      cursor: pointer;
+
+      transition:
+        opacity .15s ease,
+        transform .15s ease;
+    }
+
+    .signup-submit:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .signup-submit:active {
+      transform: translateY(0);
+    }
+
+    .signup-submit:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* Footer */
+
+    .signup-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .signup-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 2px;
+    }
+
+    .signup-footer a:hover {
+      opacity: 0.75;
+    }
+
+    /* Decorative number */
+
+    .signup-index {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 520px) {
+      .signup-page {
+        align-items: flex-start;
+        padding-top: 3rem;
+      }
+
+      .signup-card {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .signup-field input,
+      .signup-submit {
+        transition: none;
+      }
+    }
+  </style>
+
+  <div class="signup-wrapper">
+
+    <header class="signup-header">
+      <p class="signup-eyebrow">Store / Account</p>
+
+      <h1 class="signup-title">
+        Create account
+      </h1>
+
+      <p class="signup-subtitle">
+        Join the store and start exploring the catalogue.
+      </p>
+    </header>
+
+    <div class="signup-card">
+
+      <% if @user.errors.any? %>
+        <div class="signup-errors">
+          <h2>
+            <%= pluralize(@user.errors.count, "error") %>
+            prevented signup
+          </h2>
+
+          <ul>
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= form_with model: @user, url: registration_path do |form| %>
+
+        <div class="signup-field">
+          <%= form.label :email_address %>
+
+          <%= form.email_field :email_address,
+            placeholder: "you@example.com",
+            autocomplete: "email",
+            required: true %>
+        </div>
+
+        <div class="signup-field">
+          <%= form.label :password %>
+
+          <%= form.password_field :password,
+            placeholder: "••••••••",
+            autocomplete: "new-password",
+            required: true %>
+        </div>
+
+        <div class="signup-field">
+          <%= form.label :password_confirmation %>
+
+          <%= form.password_field :password_confirmation,
+            placeholder: "Repeat your password",
+            autocomplete: "new-password",
+            required: true %>
+        </div>
+
+        <%= form.submit "Create account", class: "signup-submit" %>
+
+      <% end %>
+
+    </div>
+
+    <div class="signup-footer">
+      Already have an account?
+      <%= link_to "Login", new_session_path %>
+    </div>
+
+    <div class="signup-index">
+      ACCOUNT / 01
+    </div>
+
+  </div>
+</div>
