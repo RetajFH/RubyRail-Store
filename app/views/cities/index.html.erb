@@ -1,16 +1,54 @@
-<h1>Cities</h1>
+<div class="sc-page"> 
+  <div class="sc-topbar">
+    <div> <p class="sc-eyebrow">Store locations</p> 
+    <h1 class="sc-title">Cities</h1> </div>
+    <%= link_to "＋ New city", new_city_path , class: "city-new" %>
+</div>
 
-<%= link_to "New city", new_city_path %>
-
+<% if @cities.any? %>
+    <div class="sc-grid">
 <% @cities.each do |city| %>
-  <div>
-    <span><%= city.name %></span>
+<div class="city-card">
 
-    <%= link_to "Edit", edit_city_path(city) %>
+      <div class="city-info">
 
-    <%= button_to "Delete",
-          city_path(city),
-          method: :delete,
-          data: { turbo_confirm: "Are you sure?" } %>
-  </div>
+        <div>
+          <div class="city-label">
+            City
+          </div>
+          <div class="city-name">
+            <%= city.name %>
+          </div>
+
+          
+        </div>
+      </div>
+
+        <div class="sp-actions">
+        <%= link_to "Edit",
+              edit_city_path(city),
+              class: "sp-edit" %>
+
+        <%= button_to "Delete",
+              city_path(city),
+              method: :delete,
+              data: { turbo_confirm: "Are you sure?" },
+              class: "sp-delete" %>
+      </div>
+
+    </div>
+  <% end %>
+</div>
+
+
+<% else %>
+<div class="sc-empty">
+<p>No cities have been added yet.</p>
+
+  <%= link_to "Create your first city", new_city_path %>
+</div>
+
+
 <% end %>
+
+</div>

@@ -14,7 +14,8 @@ User.find_or_create_by!(email_address: "admin@gmail.com") do |user|
   user.password_confirmation = "123456"
   user.role = "admin"
 end
-
+# test@gmail.com
+# 123456
 bakery_products = [
   {
     name: "French Butter Croissant",

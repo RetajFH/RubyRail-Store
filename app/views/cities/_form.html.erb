@@ -1,18 +1,18 @@
-<%= form_with model: city do |form| %>
+<%= form_with model: city , class: "pf-form" do |form| %>
 
   <% if city.errors.any? %>
     <div>
       <% city.errors.full_messages.each do |message| %>
-        <p><%= message %></p>
+        <p class="pf-error"><%= message %></p>
       <% end %>
     </div>
   <% end %>
 
-  <div>
+  <div class="pf-field">
     <%= form.label :name %>
     <%= form.text_field :name, required: true %>
   </div>
 
-  <%= form.submit %>
+  <%= form.submit class: "pf-submit"%>
 
 <% end %>
