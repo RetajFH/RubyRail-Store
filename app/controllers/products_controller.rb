@@ -1,21 +1,28 @@
 class ProductsController < ApplicationController
-  allow_unauthenticated_access only: %i[index show]  
   before_action :require_admin, only: %i[new create edit update destroy]
-  before_action :set_product, only: %i[show edit update destroy ]
+  before_action :set_product, only: %i[show edit update destroy]
 
   def index
     @min_price = params[:min_price]
     @max_price = params[:max_price]
     @search_by_name = params[:search_name]
 
-    @products = Product.all
+    @user_city = Current.user&.city
+
+    @products = if @user_city
+      Product.available_in(@user_city)
+    else
+      Product.all
+    end
+
 
     if @min_price.present? &&
-      @max_price.present? &&
-      @min_price.to_f > @max_price.to_f
+       @max_price.present? &&
+       @min_price.to_f > @max_price.to_f
       flash.now[:alert] = "Minimum price cannot be greater than maximum price"
       return
     end
+
     if @min_price.present?
       @products = @products.price_gteq(@min_price)
     end
@@ -38,6 +45,7 @@ class ProductsController < ApplicationController
 
   def create
     @product = Product.new(product_params)
+
     if @product.save
       redirect_to @product
     else
@@ -62,10 +70,22 @@ class ProductsController < ApplicationController
   end
 
   private
+
   def set_product
-    @product= Product.find(params[:id])
+    @product = Product.find(params[:id])
   end
+
   def product_params
-      params.expect(product: [ :name, :description, :featured_image, :inventory_count , :price ,:sizes ,city_ids: []])
+    params.expect(
+      product: [
+        :name,
+        :description,
+        :featured_image,
+        :inventory_count,
+        :price,
+        :sizes,
+        city_ids: []
+      ]
+    )
   end
 end

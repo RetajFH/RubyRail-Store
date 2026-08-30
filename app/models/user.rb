@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   has_many :sessions, dependent: :destroy
+  belongs_to :city, optional: true
   enum :role, {
     customer: "customer",
     admin: "admin"

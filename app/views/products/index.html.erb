@@ -1,5 +1,53 @@
 <% content_for :title, "Catalogue" %>
 
+<% if authenticated? && @user_city %>
+  <p class="detected-city">
+    Showing products available in <strong><%= @user_city.name %></strong> ·
+    <%= link_to "Change", "#", id: "change-location-link" %>
+  </p>
+<% elsif authenticated? %>
+  <div id="location-banner" class="location-banner">
+    <p>Login and Share your location to see products available near you.</p>
+    <button id="detect-location-btn" class="submit-btn">Use my location</button>
+  </div>
+<% end %>
+
+
+<script>
+  function requestLocation() {
+    if (!navigator.geolocation) {
+      alert("Location isn't supported in this browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        fetch("/location", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          })
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.matched) window.location.reload();
+            else alert(`We couldn't find "${data.city.name}" in our service cities yet.`);
+          })
+          .catch(() => alert("Something went wrong detecting your location."));
+      },
+      () => alert("Location permission was denied.")
+    );
+  }
+
+  document.getElementById("detect-location-btn")?.addEventListener("click", requestLocation);
+  document.getElementById("change-location-link")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    requestLocation();
+  });
+</script>
+
 <div class="sc-page">
   <div class="sc-topbar">
     <div>
@@ -8,10 +56,10 @@
     </div>
 
     <nav class="sc-nav">
-      <%= link_to "sign up" ,  new_registration_path unless authenticated?  %>
+      <%= link_to "sign up", new_registration_path unless authenticated? %>
       <%= link_to "Login", new_session_path unless authenticated? %>
-      <%= link_to "New product", new_product_path if admin?   %>
-      <%= link_to "city", cities_path if admin?   %>
+      <%= link_to "New product", new_product_path if admin? %>
+      <%= link_to "city", cities_path if admin? %>
     </nav>
   </div>
 
@@ -36,18 +84,18 @@
       </div>
 
       <span class="sc-ledger-label">Search</span>
- <div class="sc-field">
-      <%= f.text_field :search_name,
-        value: params[:search_name],
-        placeholder: "search by name" %>
- </div>
-      <%= f.submit "Filter", class: "sc-submit" %>
+      <div class="sc-field">
+        <%= f.text_field :search_name,
+          value: params[:search_name],
+          placeholder: "search by name" %>
+      </div>
 
+      <%= f.submit "Filter", class: "sc-submit" %>
       <%= link_to "Clear", products_path, class: "sc-clear" %>
     </div>
   <% end %>
 
-  <% if @products.any? %>
+    <% if @products.any? %>
     <div class="sc-grid">
       <% @products.each do |product| %>
         <%= link_to product_path(product), class: "sc-card" do %>
@@ -65,17 +113,28 @@
             <%= product.name.presence || "Untitled item" %>
           </p>
 
+          <p class="sc-cities">
+            <% if product.cities.any? %>
+              Available in: <%= product.cities.pluck(:name).join(", ") %>
+            <% else %>
+              <span class="sc-no-city">No city assigned</span>
+            <% end %>
+          </p>
+
           <div class="sc-price" data-id="<%= product.id %>">
             <%= number_to_currency(product.price) %>
           </div>
         <% end %>
       <% end %>
     </div>
-  <% else %>
     <div class="sc-empty">
-      No items match this range.
-      <%= link_to "Clear the filter", products_path %>
-      to see the full catalogue.
+      <% if @user_city && params[:min_price].blank? && params[:max_price].blank? && params[:search_name].blank? %>
+        No products are available in <%= @user_city.name %> yet.
+      <% else %>
+        No items match this range.
+        <%= link_to "Clear the filter", products_path %>
+        to see the full catalogue.
+      <% end %>
     </div>
   <% end %>
 </div>
