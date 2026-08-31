@@ -21,7 +21,7 @@ class Product < ApplicationRecord
   }
 
   scope :search_by_name, ->(name) {
-    where("name LIKE ?", "%#{name}%")
+    where("products.name LIKE ?", "%#{name}%")
   }
 
   scope :available_in, ->(city) {
