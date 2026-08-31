@@ -3,7 +3,7 @@ module Authentication
 
   included do
     before_action :require_authentication
-    helper_method :authenticated?
+    helper_method :authenticated?, :admin?
   end
 
   class_methods do
@@ -16,7 +16,9 @@ module Authentication
     def authenticated?
       resume_session
     end
-
+    def admin?
+      authenticated? && Current.session.user.admin?
+    end
     def require_authentication
       resume_session || request_authentication
     end
@@ -29,6 +31,13 @@ module Authentication
       Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
     end
 
+    def require_admin
+      return request_authentication unless authenticated?
+      return if Current.session.user.admin?
+
+      redirect_to root_path, alert: "You are not authorized to access this page."
+    end
+ 
     def request_authentication
       session[:return_to_after_authenticating] = request.url
       redirect_to new_session_path

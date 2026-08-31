@@ -14,5 +14,6 @@ module Product::Notifications
     subscribers.each do |subscriber|
       ProductMailer.with(product: self, subscriber: subscriber).in_stock.deliver_later
     end
+    ProductRestockBroadcastJob.perform_later(self)
   end
 end

@@ -1,297 +1,140 @@
 <% content_for :title, "Catalogue" %>
+
+<% if authenticated? && @user_city %>
+  <p class="detected-city">
+    Showing products available in <strong><%= @user_city.name %></strong> ·
+    <%= link_to "Change", "#", id: "change-location-link" %>
+  </p>
+<% elsif authenticated? %>
+  <div id="location-banner" class="location-banner">
+    <p>Login and Share your location to see products available near you.</p>
+    <button id="detect-location-btn" class="submit-btn">Use my location</button>
+  </div>
+<% end %>
+
+
+<script>
+  function requestLocation() {
+    if (!navigator.geolocation) {
+      alert("Location isn't supported in this browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        fetch("/location", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          })
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.matched) window.location.reload();
+            else alert(`We couldn't find "${data.city.name}" in our service cities yet.`);
+          })
+          .catch(() => alert("Something went wrong detecting your location."));
+      },
+      () => alert("Location permission was denied.")
+    );
+  }
+
+  document.getElementById("detect-location-btn")?.addEventListener("click", requestLocation);
+  document.getElementById("change-location-link")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    requestLocation();
+  });
+</script>
+
 <div class="sc-page">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Public+Sans:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap');
-
-    .sc-page {
-      --paper: #FAFAF7;
-      --ink: #1C1B1A;
-      --accent: #2B4C3F;
-      --line: #D8D5CC;
-      --muted: #8A8577;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: 'Public Sans', sans-serif;
-      padding: 2.5rem 1.5rem 4rem;
-      min-height: 100vh;
-    }
-
-    .sc-topbar {
-      max-width: 1080px;
-      margin: 0 auto 2.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 1.5rem;
-    }
-
-    .sc-eyebrow {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin: 0 0 0.4rem;
-    }
-
-    .sc-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      margin: 0;
-      letter-spacing: -0.01em;
-    }
-
-    .sc-nav {
-      display: flex;
-      gap: 1.25rem;
-      font-size: 0.85rem;
-    }
-
-    .sc-nav a {
-      color: var(--ink);
-      text-decoration: none;
-      border-bottom: 1px solid var(--muted);
-      padding-bottom: 2px;
-      transition: border-color .15s ease, color .15s ease;
-    }
-
-    .sc-nav a:hover { color: var(--accent); border-color: var(--accent); }
-
-    .sc-ledger {
-      max-width: 1080px;
-      margin: 0 auto 3rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      padding: 1rem 1.25rem;
-    }
-
-    .sc-ledger-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-right: 0.25rem;
-    }
-
-    .sc-field {
-      display: flex;
-      align-items: center;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .sc-field span {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.85rem;
-      color: var(--muted);
-      padding: 0 0.5rem;
-      background: #F2F1EC;
-    }
-
-    .sc-field input {
-      border: none;
-      outline: none;
-      width: 5.5rem;
-      padding: 0.5rem 0.6rem;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.85rem;
-      background: transparent;
-      color: var(--ink);
-    }
-
-    .sc-field input:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: -2px;
-    }
-
-    .sc-arrow { color: var(--muted); font-size: 0.9rem; }
-
-    .sc-submit {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 0.55rem 1rem;
-      cursor: pointer;
-      transition: opacity .15s ease;
-    }
-
-    .sc-submit:hover { opacity: 0.85; }
-    .sc-submit:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-    .sc-clear {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-decoration: none;
-      border-bottom: 1px dashed var(--muted);
-    }
-
-    .sc-clear:hover { color: var(--ink); border-color: var(--ink); }
-
-    .sc-grid {
-      max-width: 1080px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.75rem 1.5rem;
-    }
-
-    .sc-card {
-      position: relative;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 1.1rem 1.1rem 1.4rem;
-      text-decoration: none;
-      color: var(--ink);
-      display: block;
-      transition: transform .15s ease, box-shadow .15s ease;
-    }
-
-    .sc-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 24px -14px rgba(28,27,26,0.25);
-    }
-
-    .sc-card::before {
-      content: '';
-      position: absolute;
-      top: -7px;
-      left: 1.1rem;
-      width: 14px;
-      height: 14px;
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: 50%;
-    }
-
-    .sc-thumb {
-      aspect-ratio: 4 / 3;
-      border-radius: 5px;
-      background: #F2F1EC;
-      border: 1px dashed var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      margin-bottom: 0.9rem;
-    }
-
-    .sc-thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-    .sc-monogram {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 1.6rem;
-      color: var(--muted);
-    }
-
-    .sc-name {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 500;
-      font-size: 1rem;
-      margin: 0 0 0.5rem;
-    }
-
-    .sc-name.untitled { color: var(--muted); font-style: italic; }
-
-    .sc-price {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.95rem;
-      color: var(--accent);
-      border-top: 1px dashed var(--line);
-      padding-top: 0.6rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .sc-price::after {
-      content: '#' attr(data-id);
-      font-size: 0.65rem;
-      color: var(--muted);
-    }
-
-    .sc-empty {
-      max-width: 1080px;
-      margin: 0 auto;
-      text-align: center;
-      padding: 4rem 1rem;
-      color: var(--muted);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.9rem;
-    }
-
-    .sc-empty a { color: var(--accent); }
-
-    @media (prefers-reduced-motion: reduce) {
-      .sc-card, .sc-submit { transition: none; }
-    }
-  </style>
-
   <div class="sc-topbar">
     <div>
       <p class="sc-eyebrow">Store / Catalogue</p>
       <h1 class="sc-title"><%= t ".title" %></h1>
     </div>
+
     <nav class="sc-nav">
+      <%= link_to "sign up", new_registration_path unless authenticated? %>
       <%= link_to "Login", new_session_path unless authenticated? %>
-      <%= link_to "New product", new_product_path if authenticated? %>
+      <%= link_to "New product", new_product_path if admin? %>
+      <%= link_to "city", cities_path if admin? %>
     </nav>
   </div>
 
-  <%= form_with url: products_path, method: :get, class: "sc-ledger" do |f| %>
-    <span class="sc-ledger-label">Filter by price</span>
-    <div class="sc-field">
-      <span>$</span>
-      <%= f.number_field :min_price, value: params[:min_price], placeholder: "min" %>
+  <%= form_with url: products_path, method: :get, local: true do |f| %>
+    <div class="sc-ledger">
+      <span class="sc-ledger-label">Filter by price</span>
+
+      <div class="sc-field">
+        <span>$</span>
+        <%= f.number_field :min_price,
+          value: params[:min_price],
+          placeholder: "min" %>
+      </div>
+
+      <span class="sc-arrow">&rarr;</span>
+
+      <div class="sc-field">
+        <span>$</span>
+        <%= f.number_field :max_price,
+          value: params[:max_price],
+          placeholder: "max" %>
+      </div>
+
+      <span class="sc-ledger-label">Search</span>
+      <div class="sc-field">
+        <%= f.text_field :search_name,
+          value: params[:search_name],
+          placeholder: "search by name" %>
+      </div>
+
+      <%= f.submit "Filter", class: "sc-submit" %>
+      <%= link_to "Clear", products_path, class: "sc-clear" %>
     </div>
-    <span class="sc-arrow">&rarr;</span>
-    <div class="sc-field">
-      <span>$</span>
-      <%= f.number_field :max_price, value: params[:max_price], placeholder: "max" %>
-    </div>
-    <%= f.submit "Filter", class: "sc-submit" %>
-    <%= link_to "Clear", products_path, class: "sc-clear" %>
   <% end %>
 
-  <% if @products.any? %>
+    <% if @products.any? %>
     <div class="sc-grid">
       <% @products.each do |product| %>
-        <a href="/products/<%= product.id %>" class="sc-card">
+        <%= link_to product_path(product), class: "sc-card" do %>
           <div class="sc-thumb">
             <% if product.featured_image.attached? %>
               <%= image_tag product.featured_image %>
             <% else %>
-              <span class="sc-monogram"><%= product.name.presence&.first&.upcase || "?" %></span>
+              <span class="sc-monogram">
+                <%= product.name %>
+              </span>
             <% end %>
           </div>
+
           <p class="sc-name<%= " untitled" if product.name.blank? %>">
-            <%= product.name.presence || "Untitled item" %>
+            <%= product.name || "Untitled item" %>
           </p>
+
+          <p class="sc-cities">
+            <% if product.cities.any? %>
+              Available in: <%= product.cities.pluck(:name).join(", ") %>
+            <% else %>
+              <span class="sc-no-city">No city assigned</span>
+            <% end %>
+          </p>
+
           <div class="sc-price" data-id="<%= product.id %>">
             <%= number_to_currency(product.price) %>
           </div>
-        </a>
+        <% end %>
       <% end %>
     </div>
-  <% else %>
     <div class="sc-empty">
-      No items match this range. <%= link_to "Clear the filter", products_path %> to see the full catalogue.
+      <% if @user_city && params[:min_price].blank? && params[:max_price].blank? && params[:search_name].blank? %>
+        No products are available in <%= @user_city.name %> yet.
+      <% else %>
+        No items match this range.
+        <%= link_to "Clear the filter", products_path %>
+        to see the full catalogue.
+      <% end %>
     </div>
   <% end %>
 </div>

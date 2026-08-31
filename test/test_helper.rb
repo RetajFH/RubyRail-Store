@@ -5,12 +5,18 @@ require_relative "test_helpers/session_test_helper"
 
 module ActiveSupport
   class TestCase
+    include FactoryBot::Syntax::Methods
     # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
-
+    Shoulda::Matchers.configure do |config|
+      config.integrate do |with|
+        with.test_framework :minitest
+        with.library :rails
+      end
+    end
     # Add more helper methods to be used by all tests here...
   end
 end

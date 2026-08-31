@@ -14,6 +14,24 @@
       color: var(--accent);
       margin: 0 0 0.4rem;
     }
+     .signup-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .signup-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 2px;
+    }
+
+    .signup-footer a:hover {
+      opacity: 0.75;
+    }
+
 
     .sn-title {
       font-family: 'Space Grotesk', sans-serif;
@@ -82,7 +100,6 @@
 
     .sn-forgot {
       display: inline-block;
-      margin-top: 1.25rem;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.8rem;
       color: var(--muted);
@@ -126,9 +143,14 @@
             placeholder: "Enter your password",
             maxlength: 72 %>
     </div>
-
+ <div>
+    <%= link_to "Forgot password?", new_password_path, class: "sn-forgot" %>
+  </div>
     <%= form.submit "Sign in", class: "sn-submit" %>
   <% end %>
-
-  <%= link_to "Forgot password?", new_password_path, class: "sn-forgot" %>
+ 
+  <div class="signup-footer">
+    don have an account?
+    <%= link_to "create acount", new_registration_path %>
+  </div>
 </div>

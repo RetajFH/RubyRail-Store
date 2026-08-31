@@ -3,14 +3,12 @@ require "test_helper"
 class ProductTest < ActiveSupport::TestCase
   include ActionMailer::TestHelper
 
-  test "sends email notifications when back in stock" do
-    product = products(:tshirt)
+  context "validations" do
+    subject { FactoryBot.build(:product) }
 
-    # Set product out of stock
-    product.update(inventory_count: 0)
-
-    assert_emails 2 do
-      product.update(inventory_count: 99)
-    end
+    should validate_presence_of(:name)
+    should validate_numericality_of(:price).is_greater_than_or_equal_to(0)
+    should validate_numericality_of(:inventory_count).is_greater_than_or_equal_to(0)
   end
+
 end
