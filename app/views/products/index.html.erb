@@ -104,13 +104,13 @@
               <%= image_tag product.featured_image %>
             <% else %>
               <span class="sc-monogram">
-                <%= product.name.presence&.first&.upcase || "?" %>
+                <%= product.name %>
               </span>
             <% end %>
           </div>
 
           <p class="sc-name<%= " untitled" if product.name.blank? %>">
-            <%= product.name.presence || "Untitled item" %>
+            <%= product.name || "Untitled item" %>
           </p>
 
           <p class="sc-cities">
